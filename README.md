@@ -56,7 +56,7 @@ This project focuses on developing a robust system that detects user emotions th
 
 1. **Clone the repository**
 
-   git clone https://github.com/yourusername/Music-Recommendation-Facial-Emotions.git
+   git clone [https://github.com/smexinator/Emotify]
    
    cd Music-Recommendation-Facial-Emotions
 
