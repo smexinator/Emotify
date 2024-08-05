@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>Music Recommendation System</title>
+  <link href="/css/output.css" rel="stylesheet" />
+  <script defer src="/js/face-api.min.js"></script>
+  <script defer src="/js/script.js"></script>
+</head>
+<style>
+  canvas {
+    position: relative;
+  }
+
+  .op {
+    position: absolute;
+  }
+</style>
+
+<body>
+  <%- include('partials/nav.ejs') %>
+
+  <div class="p-4">
+    <div class="p-4 border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700 mt-14">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+        <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+          <label class="inline-flex items-center mb-5 cursor-pointer">
+            <input type="checkbox" value="checked" class="sr-only peer" id="camera-toggle" />
+            <div class="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:w-5 after:h-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-600">
+            </div>
+            <span id="camera-text" class="ms-3 text-sm font-medium text-gray-900 dark:text-gray-300">Camera Off</span>
+          </label>
+        </div>
+        <div class="flex items-center justify-center rounded bg-gray-50 h-28 dark:bg-gray-800">
+          <button data-modal-target="select-modal" data-modal-toggle="select-modal" type="button" id="detectButton"
+            class="detectButton text-white bg-gradient-to-r from-purple-500 via-purple-600 to-purple-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-purple-300 dark:focus:ring-purple-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mb-4"
+            role="button">
+            Detect Emotion
+          </button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-4">
+       
+        <div class="rounded bg-gray-50 dark:bg-gray-800 p-4" style="overflow-y: scroll; height:80dvh; scrollbar-width: none;">
+          <h1 class="font-extrabold text-3xl mb-4">My Top Tracks:</h1>
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <% if (top_tracks && top_tracks.length > 0) { %>
+              <% for (let top_track of top_tracks) { %>
+                <iframe style="border-radius:12px; margin-bottom: 10px;" src="https://open.spotify.com/embed/track/<%= top_track.id %>?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+        <div class="flex items-center justify-center rounded h-[calc(100%-1rem)] bg-gray-50 dark:bg-gray-800">
+          <div class="rounded-lg">
+            <video id="video" class="op rounded-lg" width="500" height="340" autoplay muted></video>
+            <canvas id="emotionCanvas" width="350" height="500"></canvas>
+          </div>
+        </div>
+        <div class="rounded bg-gray-50 dark:bg-gray-800 p-4" style="overflow-y: scroll; height:80dvh; scrollbar-width: none;">
+          <h1 class="font-extrabold text-3xl mb-4">Followed Artists:</h1>
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-4">
+            <% if (artists && artists.length > 0) { %>
+              <% for (let artist of artists) { %>
+                <iframe style="border-radius:12px; margin-bottom: 10px;" src="https://open.spotify.com/embed/artist/<%= artist.id %>?utm_source=generator" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              <% } %>
+            <% } %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main modal -->
+  <div id="select-modal" tabindex="-1" aria-hidden="true"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+      <!-- Modal content -->
+      <div class="relative bg-white rounded-lg shadow dark:bg-gray-700">
+        <!-- Modal header -->
+        <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
+          <h3 class="text-lg font-semibold text-gray-900 dark:text-white">Current Mood: </h3>
+          <h2 class="text-lg font-semibold text-gray-900 dark:text-white" id="expression"></h2>
+          <button type="button"
+            class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm h-8 w-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+            data-modal-toggle="select-modal">
+            <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+              viewBox="0 0 14 14">
+              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+            </svg>
+            <span class="sr-only">Close modal</span>
+          </button>
+        </div>
+        <!-- Modal body -->
+        <div class="p-4 md:p-5">
+          <p class="text-gray-500 dark:text-gray-400 mb-4">
+            Select your desired Option:
+          </p>
+
+          <div class="items-center justify-center space-y-4 sm:flex sm:space-y-0 sm:space-x-4 rtl:space-x-reverse">
+            <a href="#" id="/get-songs" class="option w-full sm:w-auto bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                
+                <div class="text-center rtl:text-right">
+                    <div class="mb-1 text-xs">I am looking for</div>
+                    <div class="-mt-1 font-sans text-sm font-semibold">SONGS</div>
+                </div>
+            </a>
+            <a href="#" id="/get-playlists" class="option w-full sm:w-auto bg-gray-800 hover:bg-gray-700 focus:ring-4 focus:outline-none focus:ring-gray-300 text-white rounded-lg inline-flex items-center justify-center px-4 py-2.5 dark:bg-gray-700 dark:hover:bg-gray-600 dark:focus:ring-gray-700">
+                
+                <div class="text-center rtl:text-right">
+                    <div class="mb-1 text-xs">I am looking for</div>
+                    <div class="-mt-1 font-sans text-sm font-semibold">PLAYLISTS</div>
+                </div>
+            </a>
+        </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/flowbite.min.js"></script>
+</body>
+
+</html>

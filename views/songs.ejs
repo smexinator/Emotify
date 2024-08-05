@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <title>Document</title>
+    <link href="/css/output.css" rel="stylesheet" />
+  </head>
+  <body>
+    <section class="bg-white dark:bg-gray-900">
+      <div class="py-8 px-4 mx-auto max-w-screen-xl sm:py-16 lg:px-6">
+        <div class="max-w-screen-md mb-8 lg:mb-16">
+          <h2
+            class="mb-4 text-4xl tracking-tight font-extrabold text-gray-900 dark:text-white"
+          >
+            Here are the recommended songs.
+          </h2>
+        </div>
+
+        <div class=" grid grid-cols-2">
+          <!-- If (Get Recommended Songs) -->
+        <% if (locals.tracks && tracks.length > 0) {%>
+          <% for (let track of tracks) {%>
+              <iframe style="border-radius:12px; margin-top: 20px;" src="https://open.spotify.com/embed/track/<%=track.id %>?utm_source=generator" width="80%" height="160" frameBorder="0" allowfullscreen=""
+                 allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+          <% } %>
+      <% } %>
+
+      <!-- If (Get songs from my playlist) -->
+      <% if (locals.myTracks && myTracks.length > 0) {%>
+        <% for (let track of myTracks) {%>
+            <iframe style="border-radius:12px; margin-top: 20px;" src="https://open.spotify.com/embed/track/<%=track.track.id %>?utm_source=generator" width="80%" height="152"
+               frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <% } %>
+    <% } %>
+
+
+        </div>
+
+        
+        </div>
+      </div>
+    </section>
+    <script
+      src="https://kit.fontawesome.com/035fa7f4ac.js"
+      crossorigin="anonymous"
+    ></script>
+    <script src="/js/flowbite.min.js"></script>
+  </body>
+</html>
