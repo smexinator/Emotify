@@ -1,4 +1,4 @@
-# Music Recommendation through Facial Emotions
+# Music Recommendation through Facial Emotionss
 
 ## Overview
 
